@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>StudTasker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ===== 1. DESIGN TOKENS (light, blue/white/soft purple) ===== */
+:root{--pri:#6D28D9;--acc:#A78BFA;--bg:#F7F4FE;--card:#fff;--bd:#E6DEF7;--tx:#2A1F45;--tx2:#6B5F85;--on:#fff;--amb:#92400E;--ambbg:#FEF3C7;--grn:#065F46;--grnbg:#D1FAE5;--red:#B91C1C;--redbg:#FEE2E2;--sh:0 4px 20px rgba(109,40,217,.08);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--pri:#B79BFF;--acc:#9F7AEA;--bg:#140E24;--card:#1E1535;--bd:#35285A;--tx:#EFE9FF;--tx2:#B3A6D4;--on:#1A0F33;--amb:#FCD34D;--ambbg:#3A2E0F;--grn:#6EE7B7;--grnbg:#0F3326;--red:#FCA5A5;--redbg:#3F1717;color-scheme:dark}}
+:root[data-theme="dark"]{--pri:#B79BFF;--acc:#9F7AEA;--bg:#140E24;--card:#1E1535;--bd:#35285A;--tx:#EFE9FF;--tx2:#B3A6D4;--on:#1A0F33;--amb:#FCD34D;--ambbg:#3A2E0F;--grn:#6EE7B7;--grnbg:#0F3326;--red:#FCA5A5;--redbg:#3F1717;color-scheme:dark}
+/* ===== 2. BASE + LAYOUT ===== */
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.55 "Plus Jakarta Sans",Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background-color:var(--bg);background-image:radial-gradient(900px 420px at 88% -6%,color-mix(in srgb,var(--acc) 24%,transparent),transparent),radial-gradient(700px 360px at -5% 105%,color-mix(in srgb,var(--pri) 14%,transparent),transparent);background-attachment:fixed;color:var(--tx)}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+h1{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:0}h2{font-size:18px;margin:0 0 12px}h3{font-size:16px;margin:0}
+.mu{color:var(--tx2);font-size:13px;margin:0}
+nav{position:fixed;left:0;top:0;bottom:0;width:240px;background:var(--card);border-right:1px solid var(--bd);padding:calc(20px + env(safe-area-inset-top,0px)) 12px 16px;display:flex;flex-direction:column;gap:4px;z-index:5}
+.logo{font-weight:800;font-size:20px;letter-spacing:-.02em;color:var(--tx);padding:0 12px 20px;display:flex;gap:10px;align-items:center}
+.lg{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,#5B21B6,#8B5CF6);color:#fff;box-shadow:0 4px 12px rgba(91,33,182,.35)}
+nav a{display:flex;gap:12px;align-items:center;padding:10px 12px;border-radius:8px;color:var(--tx2);text-decoration:none;font-weight:500;min-height:44px}
+nav a:hover{background:var(--bg)}
+nav a.on{background:color-mix(in srgb,var(--pri) 14%,transparent);color:var(--pri);font-weight:700;box-shadow:inset 3px 0 0 var(--pri)}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+main{margin-left:240px;padding:32px}
+.wrap{max-width:1200px;margin:0 auto}
+section.pg{display:none}section.pg.on{display:block}
+.ph{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;box-shadow:var(--sh);padding:24px}
+.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#5B21B6,#7C3AED 60%,#8B5CF6);color:#fff;border-radius:16px;padding:24px 28px;margin-bottom:16px;box-shadow:var(--sh)}
+.hero:after{content:"";position:absolute;right:-40px;top:-60px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.12);pointer-events:none}
+.hero h2{color:#fff;font-size:22px;margin:0 0 4px}.hero p{margin:0;opacity:.95}
+#prog b{font-size:32px;color:var(--pri)}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
+.stat{display:flex;align-items:center;gap:14px}.stat b{display:block;font-size:28px;line-height:1.2}
+.ic{width:44px;height:44px;flex:none;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--pri) 14%,transparent);color:var(--pri)}
+.sPending .ic{background:var(--ambbg);color:var(--amb)}.sCompleted .ic{background:var(--grnbg);color:var(--grn)}.sOverdue .ic{background:var(--redbg);color:var(--red)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.cal2{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+.bar{height:12px;background:var(--bd);border-radius:99px;overflow:hidden;margin-top:10px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pri),var(--acc));transition:width .3s}
+/* ===== 3. COMPONENTS ===== */
+.btn{font:inherit;font-weight:600;padding:9px 18px;border-radius:10px;border:1px solid var(--pri);background:var(--pri);color:var(--on);cursor:pointer;min-height:40px;box-shadow:0 2px 8px color-mix(in srgb,var(--pri) 35%,transparent);transition:transform .15s,box-shadow .15s}
+.btn.sec{background:transparent;color:var(--pri);box-shadow:none}
+.btn.dng{background:#DC2626;border-color:#DC2626;color:#fff}
+.btn:hover{filter:brightness(.95);transform:translateY(-1px)}.btn:disabled{opacity:.5;cursor:not-allowed}
+input,select,textarea{font:inherit;padding:9px 12px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);min-height:40px;width:100%}
+label{display:block;font-weight:600;font-size:14px;margin-bottom:12px}
+label input,label select,label textarea{margin-top:4px;font-weight:400}
+.err{color:var(--red);font-weight:500;display:block}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--pri);box-shadow:0 0 0 3px color-mix(in srgb,var(--pri) 22%,transparent)}
+input,select,textarea{border-radius:10px}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tb{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.tb>*{flex:1 1 140px;width:auto}.tb .q{flex:2 1 220px}
+.b{display:inline-flex;gap:4px;align-items:center;font-size:13px;font-weight:600;padding:2px 10px;border-radius:99px}
+.b.Pending,.b.pMedium{background:var(--ambbg);color:var(--amb)}
+.b.Completed,.b.pLow{background:var(--grnbg);color:var(--grn)}
+.b.Overdue,.b.pHigh{background:var(--redbg);color:var(--red)}
+.tag{font-size:13px;padding:2px 10px;border-radius:99px;background:color-mix(in srgb,var(--acc) 20%,transparent)}
+.tc{background:var(--card);border:1px solid var(--bd);border-left:4px solid var(--amb);border-radius:14px;box-shadow:var(--sh);padding:16px 20px;margin-bottom:12px;transition:transform .15s,box-shadow .15s}
+.tc:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(109,40,217,.16)}
+.tc.Overdue{border-left-color:var(--red)}.tc.Completed{border-left-color:var(--grn)}
+.th{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.dn{text-decoration:line-through;color:var(--tx2)}
+.meta,.act{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+ul.l{list-style:none;margin:0;padding:0}
+.row{display:flex;width:100%;justify-content:space-between;gap:8px;align-items:center;text-align:left;font:inherit;color:inherit;background:none;border:0;border-bottom:1px solid var(--bd);padding:10px 0;cursor:pointer;min-height:44px}
+.empty{text-align:center;color:var(--tx2);padding:24px 8px}.empty svg{width:36px;height:36px;color:var(--acc)}.empty .btn{margin-top:8px}
+dialog{border:1px solid var(--bd);border-radius:16px;box-shadow:0 20px 60px rgba(40,10,90,.35);background:var(--card);color:var(--tx);padding:24px;width:min(520px,calc(100vw - 32px))}
+dialog::backdrop{background:rgba(30,10,60,.5);backdrop-filter:blur(3px)}
+#toast{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:8px;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none;z-index:20;max-width:calc(100vw - 32px)}
+#toast.on{opacity:1;transform:none}
+/* calendar */
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.dow{text-align:center;font-size:13px;color:var(--tx2);padding:4px 0}
+.day{min-height:48px;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--tx);cursor:pointer;font:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.day:hover{border-color:var(--pri)}.day.today{outline:2px solid var(--pri)}.day.sel{background:color-mix(in srgb,var(--pri) 28%,transparent);border-color:var(--pri);font-weight:700}
+.dots{display:flex;gap:2px;height:6px}.dot{width:6px;height:6px;border-radius:50%;background:var(--amb)}.dot.Overdue{background:var(--red)}.dot.Completed{background:var(--grn)}
+.calh{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}.calh h2{margin:0;flex:1;min-width:140px}
+/* assistant */
+.chat{height:360px;overflow:auto;display:flex;flex-direction:column;gap:12px;padding:4px;margin-bottom:12px}
+.m{max-width:88%;padding:10px 14px;border-radius:12px;background:var(--bg);border:1px solid var(--bd)}
+.m.u{align-self:flex-end;background:var(--pri);color:var(--on);border-color:var(--pri)}
+.m ol,.m ul{margin:6px 0;padding-left:20px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.chips .btn{border-radius:99px;padding:6px 14px;min-height:36px}
+.mode{display:inline-block;background:var(--ambbg);color:var(--amb);font-weight:600;font-size:13px;padding:4px 12px;border-radius:99px;margin-bottom:12px}
+.send{display:flex;gap:8px}
+.srow{display:flex;gap:8px;margin-bottom:8px}
+.pol h2{margin-top:20px}.pol p,.pol li{max-width:75ch}
+.tm{position:fixed;left:12px;bottom:calc(16px + env(safe-area-inset-bottom,0px));width:216px;height:44px;display:flex;align-items:center;gap:12px;padding:0 12px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--pri);font:inherit;font-weight:600;cursor:pointer;z-index:6}
+.tm:hover{background:color-mix(in srgb,var(--pri) 12%,var(--bg))}
+/* responsive */
+@media(max-width:1023px){nav{width:72px}nav a span,.logo span{display:none}nav a,.logo{justify-content:center;padding-left:0;padding-right:0}main{margin-left:72px;padding:24px}.tm{width:48px;justify-content:center;padding:0}.tm span{display:none}.grid4{grid-template-columns:repeat(2,1fr)}.cal2{grid-template-columns:1fr}}
+@media(max-width:599px){nav{top:auto;width:100%;flex-direction:row;border-right:0;border-top:1px solid var(--bd);padding:4px 4px calc(4px + env(safe-area-inset-bottom,0px));justify-content:space-around}.logo{display:none}nav a{flex-direction:column;gap:0;font-size:11px;padding:6px 2px;flex:1;min-height:48px}nav a span{display:block}main{margin-left:0;padding:64px 16px 96px}nav a.on{box-shadow:inset 0 3px 0 var(--pri)}.hero{padding:20px}.tm{left:auto;right:12px;bottom:auto;top:calc(8px + env(safe-area-inset-top,0px));width:44px;border-radius:50%}.two,.r2{grid-template-columns:1fr}.card{padding:16px}input,select,.btn{min-height:44px}#toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}.stat b{font-size:24px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<nav id="nav" aria-label="Main"></nav>
+<button class="tm" id="tm" type="button"></button>
+<main><div class="wrap">
+
+<!-- ===== DASHBOARD ===== -->
+<section class="pg" id="p-dashboard">
+  <div class="ph"><h1>Dashboard</h1><button class="btn" data-a="add">+ Add task</button></div>
+  <div class="hero" id="hero"></div>
+  <div class="grid4" id="stats"></div>
+  <div class="card"><h2>Progress</h2><div id="prog"></div></div>
+  <div class="two"><div class="card"><h2>Nearest deadlines</h2><div id="near"></div></div><div class="card"><h2>Overdue</h2><div id="over"></div></div></div>
+</section>
+
+<!-- ===== MY TASKS ===== -->
+<section class="pg" id="p-tasks">
+  <div class="ph"><h1>My tasks</h1><button class="btn" data-a="add">+ Add task</button></div>
+  <div class="tb">
+    <input class="q" id="q" type="search" placeholder="Search by title" aria-label="Search tasks by title">
+    <select id="fs" aria-label="Filter by subject"></select>
+    <select id="fp" aria-label="Filter by priority"><option value="">All priorities</option><option>High</option><option>Medium</option><option>Low</option></select>
+    <select id="fst" aria-label="Filter by status"><option value="">All statuses</option><option>Pending</option><option>Completed</option><option>Overdue</option></select>
+    <select id="fd" aria-label="Filter by deadline"><option value="">Any deadline</option><option value="today">Due today</option><option value="week">Due this week</option><option value="over">Overdue</option></select>
+    <select id="so" aria-label="Sort tasks"><option value="date">Sort: nearest deadline</option><option value="pri">Sort: priority</option></select>
+    <button class="btn sec" id="clr" hidden>Clear filters</button>
+  </div>
+  <div id="list"></div>
+</section>
+
+<!-- ===== CALENDAR ===== -->
+<section class="pg" id="p-calendar">
+  <div class="ph"><h1>Calendar</h1><button class="btn" data-a="add">+ Add task</button></div>
+  <div class="cal2"><div class="card">
+    <div class="calh"><h2 id="calT"></h2><button class="btn sec" id="cp" aria-label="Previous month">‹</button><button class="btn sec" id="ct">Today</button><button class="btn sec" id="cn" aria-label="Next month">›</button></div>
+    <div class="cg" id="cg"></div></div>
+    <div><div class="card"><h2 id="dayT">Selected day</h2><div id="dayL"></div></div><div class="card" style="margin-top:16px"><h2>Upcoming deadlines</h2><div id="upc"></div></div></div>
+  </div>
+</section>
+
+<!-- ===== AI ASSISTANT (rule-based) ===== -->
+<section class="pg" id="p-assistant">
+  <div class="ph"><h1>LanceBot</h1></div>
+  <div class="card">
+    <span class="mode">LanceBot is a basic assistant: rule-based, not a live AI model</span>
+    <p class="mu" style="margin-bottom:12px">LanceBot reads your saved tasks in this browser and applies simple rules to deadlines and priorities. Nothing is sent to any server.</p>
+    <div class="chips"><button class="btn sec" data-q="What should I do first?">What should I do first?</button><button class="btn sec" data-q="Make a study plan">Make a study plan</button><button class="btn sec" data-q="Break down a task">Break down a task</button><button class="btn sec" data-q="Study tips">Study tips</button></div>
+    <label style="max-width:260px">Study hours available per day<input id="hrs" type="number" min="1" max="12" step="1"></label>
+    <div class="chat" id="chat" aria-live="polite"></div>
+    <form class="send" id="cf"><input id="ci" aria-label="Message" placeholder="Ask about priorities, a plan, or breaking down a task"><button class="btn">Send</button></form>
+  </div>
+</section>
+
+<!-- ===== SETTINGS ===== -->
+<section class="pg" id="p-settings">
+  <div class="ph"><h1>Settings</h1></div>
+  <div class="card"><h2>Appearance</h2><label style="max-width:280px">Theme<select id="theme"><option value="light">Light</option><option value="dark">Dark</option><option value="auto">Match my device</option></select></label><p class="mu">You can also switch quickly with the sun/moon button on every page.</p></div>
+  <div class="card" style="margin-top:16px"><h2>Subjects</h2><div id="subs"></div>
+    <form class="srow" id="sf"><input id="sn" placeholder="New subject name" aria-label="New subject name"><button class="btn">Add subject</button></form><small class="err" id="se"></small></div>
+  <div class="card" style="margin-top:16px"><h2>Data</h2>
+    <p class="mu" style="margin-bottom:12px">Data is saved only in this browser on this device and does not sync across devices.</p>
+    <div class="act" style="margin:0"><button class="btn sec" id="ls">Load sample tasks</button><button class="btn sec" id="rs">Remove sample tasks</button><button class="btn dng" id="ca">Clear all data</button></div></div>
+</section>
+
+<!-- ===== PRIVACY ===== -->
+<section class="pg" id="p-privacy">
+  <div class="ph"><h1>Privacy policy</h1></div>
+  <div class="card pol">
+    <h2 style="margin-top:0">What StudTasker stores</h2>
+    <p>Your tasks (title, description, subject, due date and time, priority, completion status), your list of subjects, and preferences (dark mode, study hours per day). Please don’t enter passwords, ID numbers, or other sensitive information.</p>
+    <h2>Why it is stored</h2><p>To show your tasks, deadlines, dashboard, calendar, and assistant suggestions after you refresh or reopen the page.</p>
+    <h2>How Local Storage works</h2><p>Your browser keeps this data on your device, tied to this site and this browser profile. It does not sync to other devices or browsers, and there is no account or backup.</p>
+    <h2>External AI services</h2><p>None. LanceBot is a basic rule-based tool that runs in your browser using your saved tasks. No task data is sent to an AI service by this app.</p>
+    <h2>Third-party services</h2><p>StudTasker uses no analytics, ads, or third-party libraries. The website host may keep standard server logs (such as IP address and pages requested) as part of serving the page.</p>
+    <h2>Clearing your data</h2><p>Use Settings, then “Clear all data”. You can also clear this site’s data in your browser settings.</p>
+    <h2>Limits of privacy and security</h2><ul><li>Local Storage is not encrypted.</li><li>Anyone using the same browser profile on this device can read it.</li><li>Browser extensions or shared computers can expose it.</li><li>Clearing browser data permanently deletes your tasks.</li></ul>
+  </div>
+</section>
+
+</div></main>
+
+<!-- ===== DIALOGS ===== -->
+<dialog id="dTask"><form id="fTask" novalidate><h2 id="dT">Add task</h2>
+  <label>Title *<input id="fTitle" maxlength="100"><small class="err" id="eTitle"></small></label>
+  <label>Description<textarea id="fDesc" rows="3"></textarea></label>
+  <label>Subject *<input id="fSub" list="dl" maxlength="40"><datalist id="dl"></datalist><small class="err" id="eSub"></small></label>
+  <div class="r2"><label>Due date and time *<input id="fDue" type="datetime-local"><small class="err" id="eDue"></small></label>
+  <label>Priority<select id="fPri"><option>Low</option><option selected>Medium</option><option>High</option></select></label></div>
+  <div class="act"><button type="button" class="btn sec" data-a="close">Cancel</button><button class="btn">Save task</button></div></form></dialog>
+<dialog id="dView"><div id="vBody"></div><div class="act"><button class="btn sec" data-a="close">Close</button></div></dialog>
+<dialog id="dConf"><h2>Please confirm</h2><p id="cMsg"></p><div class="act"><button class="btn sec" data-a="close">Cancel</button><button class="btn dng" id="cYes">Delete</button></div></dialog>
+<div id="toast" role="status"></div>
+
+<script>
+/* ===== 4. HELPERS ===== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const p2=n=>String(n).padStart(2,"0"),uid=()=>Math.random().toString(36).slice(2,9);
+const toLocal=d=>`${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())}T${p2(d.getHours())}:${p2(d.getMinutes())}`;
+const dkey=d=>toLocal(d).slice(0,10);
+const fmt=s=>new Date(s).toLocaleString([],{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
+const I={home:"M3 11l9-8 9 8v10h-6v-6H9v6H3z",list:"M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01",cal:"M3 5h18v16H3zM3 10h18M8 3v4M16 3v4",bot:"M4 8h16v11H4zM12 8V4M9 13h.01M15 13h.01",set:"M4 7h9M17 7h3M4 17h3M11 17h9M15 4v6M9 14v6",lock:"M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z",sun:"M12 17a5 5 0 100-10 5 5 0 000 10zM12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4",moon:"M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z",check:"M5 13l4 4L19 7",clock:"M12 7v5l3 3M12 21a9 9 0 100-18 9 9 0 000 18z",alert:"M12 8v5M12 17h.01M10.3 3.9L2.4 18a2 2 0 001.7 3h15.8a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"};
+const icon=n=>`<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="${I[n]}"/></svg>`;
+const SI={Pending:"◔",Completed:"✓",Overdue:"!"};
+let toastT;function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("on"),3000)}
+
+/* ===== 5. STORAGE (Local Storage, tolerant of missing/corrupt data) ===== */
+const KEY="studtasker:v1";
+let S={tasks:[],subjects:["Math","Science","English","History"],prefs:{theme:"auto",hours:2}};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function load(){
+  try{const r=localStorage.getItem(KEY);
+    if(r){const d=JSON.parse(r);
+      if(d&&Array.isArray(d.tasks)){S.tasks=d.tasks.filter(t=>t&&t.title&&t.due);if(Array.isArray(d.subjects))S.subjects=d.subjects;S.prefs={...S.prefs,...(d.prefs||{})};return}}}catch(e){}
+  S.tasks=samples();save();
+}
+/* Sample tasks use dates relative to today so they always look realistic */
+function samples(){
+  const d=n=>{const t=new Date();t.setDate(t.getDate()+n);t.setHours(17,0,0,0);return toLocal(t)};
+  return [["Algebra problem set","Chapters 4–5, odd numbers","Math",-1,"High"],["Lab report: photosynthesis","Write the methods and results sections","Science",1,"High"],["Read chapter 7","Take notes on the key events","History",2,"Medium"],["Study for math quiz","Review formulas and past exercises","Math",3,"High"],["Essay outline","Outline for the persuasive essay","English",4,"Medium"],["Vocabulary review","Unit 3 word list","English",6,"Low"]]
+   .map(([title,desc,subject,o,priority])=>({id:uid(),title,desc,subject,due:d(o),priority,done:false,sample:true}));
+}
+
+/* ===== 6. TASK LOGIC (add / edit / delete / complete) ===== */
+const status=t=>t.done?"Completed":(new Date(t.due)<new Date()?"Overdue":"Pending");
+const wt={High:3,Medium:2,Low:1};
+function ensureSubject(s){if(!S.subjects.some(x=>x.toLowerCase()===s.toLowerCase()))S.subjects.push(s)}
+function addTask(v){ensureSubject(v.subject);S.tasks.push({id:uid(),...v,done:false,sample:false});save();render();toast("Task added")}
+function editTask(id,v){const t=S.tasks.find(x=>x.id===id);if(!t)return;ensureSubject(v.subject);Object.assign(t,v);save();render();toast("Task updated")}
+function deleteTask(id){S.tasks=S.tasks.filter(x=>x.id!==id);save();render();toast("Task deleted")}
+function toggleTask(id){const t=S.tasks.find(x=>x.id===id);if(!t)return;t.done=!t.done;save();render();toast(t.done?"Task completed":"Task marked as pending")}
+const byDate=(a,b)=>new Date(a.due)-new Date(b.due);
+
+/* ===== 7. RENDERING ===== */
+const empty=(msg,btn)=>`<div class="empty">${icon("list")}<p>${msg}</p>${btn?'<button class="btn" data-a="add">+ Add task</button>':""}</div>`;
+function card(t){const s=status(t);return `<article class="tc ${s}"><div class="th"><h3 class="${t.done?"dn":""}">${esc(t.title)}</h3><span class="b ${s}">${SI[s]} ${s}</span></div>${t.desc?`<p class="mu" style="margin-top:4px">${esc(t.desc)}</p>`:""}<div class="meta"><span class="tag">${esc(t.subject)}</span><span class="b p${t.priority}">${t.priority} priority</span><span class="mu">Due ${fmt(t.due)}</span>${t.sample?'<span class="tag">Sample</span>':""}</div><div class="act"><button class="btn sec" data-a="done" data-id="${t.id}">${t.done?"Mark pending":"Complete"}</button><button class="btn sec" data-a="edit" data-id="${t.id}">Edit</button><button class="btn dng" data-a="del" data-id="${t.id}">Delete</button></div></article>`}
+const rowOf=t=>{const s=status(t);return `<li><button class="row" data-a="view" data-id="${t.id}"><span><b>${esc(t.title)}</b><br><span class="mu">${esc(t.subject)} · ${fmt(t.due)}</span></span><span class="b ${s}">${SI[s]} ${s}</span></button></li>`};
+
+function renderDash(){
+  const T=S.tasks,n=T.length,done=T.filter(t=>t.done).length,over=T.filter(t=>status(t)==="Overdue").length,pend=T.filter(t=>status(t)==="Pending").length;
+  $("#stats").innerHTML=[["Total",n,"list"],["Pending",pend,"clock"],["Completed",done,"check"],["Overdue",over,"alert"]].map(([l,v,ic])=>`<div class="card stat s${l}"><span class="ic">${icon(ic)}</span><div><span class="mu">${l}</span><b>${v}</b></div></div>`).join("");
+  const hr=new Date().getHours(),dueToday=T.filter(t=>!t.done&&dkey(new Date(t.due))===dkey(new Date())).length;
+  $("#hero").innerHTML=`<h2>Good ${hr<12?"morning":hr<18?"afternoon":"evening"}!</h2><p>${n?`You have <b>${dueToday}</b> task${dueToday==1?"":"s"} due today and <b>${over}</b> overdue.`:"Add your first task to start planning your week."}</p>`;
+  const pc=n?Math.round(done/n*100):0;
+  $("#prog").innerHTML=n?`<b>${pc}%</b> of tasks completed (${done} of ${n})<div class="bar" role="progressbar" aria-valuenow="${pc}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pc}%"></i></div>`:empty("No tasks yet. Add your first task to start tracking progress.",true);
+  const nx=T.filter(t=>status(t)==="Pending").sort(byDate).slice(0,5);
+  $("#near").innerHTML=nx.length?`<ul class="l">${nx.map(rowOf).join("")}</ul>`:empty("No upcoming deadlines. Add a task with a due date.",true);
+  const ov=T.filter(t=>status(t)==="Overdue").sort(byDate);
+  $("#over").innerHTML=ov.length?`<ul class="l">${ov.map(rowOf).join("")}</ul>`:'<div class="empty">Nothing overdue. Nice work!</div>';
+}
+function renderTasks(){
+  const fs=$("#fs"),cur=fs.value;
+  fs.innerHTML='<option value="">All subjects</option>'+S.subjects.map(s=>`<option>${esc(s)}</option>`).join("");fs.value=S.subjects.includes(cur)?cur:"";
+  const q=$("#q").value.trim().toLowerCase(),p=$("#fp").value,st=$("#fst").value,dl=$("#fd").value,sb=fs.value;
+  const now=new Date(),wk=new Date(now.getTime()+7*864e5);
+  let L=S.tasks.filter(t=>(!q||t.title.toLowerCase().includes(q))&&(!sb||t.subject===sb)&&(!p||t.priority===p)&&(!st||status(t)===st)&&
+    (!dl||(dl==="today"&&dkey(new Date(t.due))===dkey(now))||(dl==="week"&&new Date(t.due)>=now&&new Date(t.due)<=wk)||(dl==="over"&&status(t)==="Overdue")));
+  L.sort($("#so").value==="pri"?(a,b)=>wt[b.priority]-wt[a.priority]||byDate(a,b):byDate);
+  $("#clr").hidden=!(q||p||st||dl||sb);
+  $("#list").innerHTML=L.length?L.map(card).join(""):(S.tasks.length?'<div class="card empty">No tasks match your filters. Try clearing them.</div>':'<div class="card">'+empty("You have no tasks yet. Add your first assignment to get started.",true)+"</div>");
+}
+let cal=new Date(),sel=dkey(new Date());cal.setDate(1);
+function renderCal(){
+  const y=cal.getFullYear(),m=cal.getMonth(),td=dkey(new Date());
+  $("#calT").textContent=cal.toLocaleString([],{month:"long",year:"numeric"});
+  let h=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d=>`<div class="dow">${d}</div>`).join("");
+  for(let i=0;i<new Date(y,m,1).getDay();i++)h+="<div></div>";
+  for(let d=1;d<=new Date(y,m+1,0).getDate();d++){
+    const k=`${y}-${p2(m+1)}-${p2(d)}`,ts=S.tasks.filter(t=>t.due.startsWith(k));
+    h+=`<button class="day ${k===td?"today":""} ${k===sel?"sel":""}" data-day="${k}" aria-label="${k}, ${ts.length} task${ts.length==1?"":"s"}">${d}<span class="dots">${ts.slice(0,3).map(t=>`<i class="dot ${status(t)}"></i>`).join("")}</span></button>`}
+  $("#cg").innerHTML=h;
+  const dt=S.tasks.filter(t=>t.due.startsWith(sel)).sort(byDate);
+  $("#dayT").textContent=new Date(sel+"T00:00").toLocaleDateString([],{weekday:"long",month:"long",day:"numeric"});
+  $("#dayL").innerHTML=dt.length?`<ul class="l">${dt.map(rowOf).join("")}</ul>`:'<div class="empty">No tasks on this day.</div>';
+  const up=S.tasks.filter(t=>status(t)==="Pending").sort(byDate).slice(0,5);
+  $("#upc").innerHTML=up.length?`<ul class="l">${up.map(rowOf).join("")}</ul>`:'<div class="empty">No upcoming deadlines.</div>';
+}
+function renderSettings(){
+  $("#theme").value=S.prefs.theme;
+  $("#subs").innerHTML=S.subjects.map(s=>`<div class="srow"><input class="sr" value="${esc(s)}" data-old="${esc(s)}" aria-label="Rename subject ${esc(s)}"><button class="btn dng" data-a="subdel" data-s="${esc(s)}" aria-label="Delete subject ${esc(s)}">Delete</button></div>`).join("");
+  $("#dl").innerHTML=S.subjects.map(s=>`<option value="${esc(s)}">`).join("");
+}
+function render(){renderDash();renderTasks();renderCal();renderSettings()}
+const isDark=()=>S.prefs.theme==="dark"||(S.prefs.theme==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);
+/* Apply the saved theme and refresh the sun/moon button */
+function applyTheme(){const t=S.prefs.theme;t==="auto"?document.documentElement.removeAttribute("data-theme"):document.documentElement.dataset.theme=t;
+  const d=isDark(),b=$("#tm");b.innerHTML=icon(d?"sun":"moon")+`<span>${d?"Light mode":"Dark mode"}</span>`;b.setAttribute("aria-label",d?"Switch to light mode":"Switch to dark mode")}
+
+/* ===== 8. NAVIGATION ===== */
+const PAGES=[["dashboard","Dashboard","home"],["tasks","My tasks","list"],["calendar","Calendar","cal"],["assistant","LanceBot","bot"],["settings","Settings","set"],["privacy","Privacy","lock"]];
+$("#nav").innerHTML='<div class="logo"><b class="lg">'+icon("cal")+'</b><span>StudTasker</span></div>'+PAGES.map(([id,l,ic])=>`<a href="#${id}" data-p="${id}" aria-label="${l}">${icon(ic)}<span>${l}</span></a>`).join("");
+function go(){const id=PAGES.some(p=>p[0]===location.hash.slice(1))?location.hash.slice(1):"dashboard";
+  document.querySelectorAll("section.pg").forEach(s=>s.classList.toggle("on",s.id==="p-"+id));
+  document.querySelectorAll("nav a").forEach(a=>{a.classList.toggle("on",a.dataset.p===id);a.toggleAttribute("aria-current",a.dataset.p===id)});scrollTo(0,0)}
+addEventListener("hashchange",go);
+
+/* ===== 9. FORMS, DIALOGS, EVENTS ===== */
+let editing=null,onYes=null;
+function openForm(t){editing=t?t.id:null;$("#dT").textContent=t?"Edit task":"Add task";
+  $("#fTitle").value=t?t.title:"";$("#fDesc").value=t?t.desc:"";$("#fSub").value=t?t.subject:(S.subjects[0]||"");
+  const d=new Date();d.setDate(d.getDate()+1);d.setHours(17,0,0,0);$("#fDue").value=t?t.due:toLocal(d);$("#fPri").value=t?t.priority:"Medium";
+  ["Title","Sub","Due"].forEach(k=>$("#e"+k).textContent="");$("#dTask").showModal()}
+$("#fTask").onsubmit=e=>{e.preventDefault();
+  const v={title:$("#fTitle").value.trim(),desc:$("#fDesc").value.trim(),subject:$("#fSub").value.trim(),due:$("#fDue").value,priority:$("#fPri").value};
+  const er={Title:!v.title&&"Please enter a task title.",Sub:!v.subject&&"Please choose or type a subject.",Due:(!v.due||isNaN(new Date(v.due)))&&"Please set a valid due date and time."};
+  let bad=false;for(const k in er){$("#e"+k).textContent=er[k]||"";if(er[k])bad=true}
+  if(bad)return;editing?editTask(editing,v):addTask(v);$("#dTask").close()};
+function ask(msg,yes,label){$("#cMsg").textContent=msg;$("#cYes").textContent=label||"Delete";onYes=yes;$("#dConf").showModal()}
+$("#cYes").onclick=()=>{$("#dConf").close();onYes&&onYes()};
+
+document.addEventListener("click",e=>{
+  const q=e.target.closest("[data-q]");if(q){chat(q.dataset.q);return}
+  const dy=e.target.closest("[data-day]");if(dy){sel=dy.dataset.day;renderCal();return}
+  const b=e.target.closest("[data-a]");if(!b)return;
+  const a=b.dataset.a,t=S.tasks.find(x=>x.id===b.dataset.id);
+  if(a==="close")b.closest("dialog").close();
+  else if(a==="add")openForm();
+  else if(a==="subdel"){const s=b.dataset.s,n=S.tasks.filter(x=>x.subject===s).length;
+    if(n)toast(`“${s}” is used by ${n} task${n>1?"s":""}. Rename it instead, or edit those tasks first.`);
+    else{S.subjects=S.subjects.filter(x=>x!==s);save();render();toast("Subject deleted")}}
+  else if(t){$("#dView").close();
+    if(a==="edit")openForm(t);else if(a==="done")toggleTask(t.id);
+    else if(a==="del")ask(`Delete “${t.title}”? This can’t be undone.`,()=>deleteTask(t.id));
+    else if(a==="view"){$("#vBody").innerHTML=card(t);$("#dView").showModal()}}
+});
+["q","fs","fp","fst","fd","so"].forEach(id=>$("#"+id).addEventListener(id==="q"?"input":"change",renderTasks));
+$("#clr").onclick=()=>{["q","fs","fp","fst","fd"].forEach(id=>$("#"+id).value="");renderTasks();toast("Filters cleared")};
+$("#cp").onclick=()=>{cal.setMonth(cal.getMonth()-1);renderCal()};
+$("#cn").onclick=()=>{cal.setMonth(cal.getMonth()+1);renderCal()};
+$("#ct").onclick=()=>{cal=new Date();cal.setDate(1);sel=dkey(new Date());renderCal()};
+$("#theme").onchange=e=>{S.prefs.theme=e.target.value;save();applyTheme();toast("Theme: "+e.target.options[e.target.selectedIndex].text)};
+$("#tm").onclick=()=>{S.prefs.theme=isDark()?"light":"dark";save();applyTheme();renderSettings();toast(isDark()?"Dark mode on":"Light mode on")};
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",applyTheme);
+$("#sf").onsubmit=e=>{e.preventDefault();const v=$("#sn").value.trim();
+  if(!v){$("#se").textContent="Please enter a subject name.";return}
+  if(S.subjects.some(s=>s.toLowerCase()===v.toLowerCase())){$("#se").textContent="That subject already exists.";return}
+  $("#se").textContent="";S.subjects.push(v);$("#sn").value="";save();render();toast("Subject added")};
+$("#subs").addEventListener("change",e=>{const i=e.target.closest(".sr");if(!i)return;const o=i.dataset.old,v=i.value.trim();
+  if(!v||(S.subjects.some(s=>s.toLowerCase()===v.toLowerCase()&&s!==o))){toast("Enter a unique, non-empty subject name.");renderSettings();return}
+  S.subjects=S.subjects.map(s=>s===o?v:s);S.tasks.forEach(t=>{if(t.subject===o)t.subject=v});save();render();toast("Subject renamed")});
+$("#ls").onclick=()=>{S.tasks.push(...samples());S.tasks.forEach(t=>ensureSubject(t.subject));save();render();toast("Sample tasks loaded")};
+$("#rs").onclick=()=>{S.tasks=S.tasks.filter(t=>!t.sample);save();render();toast("Sample tasks removed")};
+$("#ca").onclick=()=>ask("Delete all tasks, subjects, and preferences stored in this browser?",()=>{S={tasks:[],subjects:["Math","Science","English","History"],prefs:{theme:"auto",hours:2}};save();applyTheme();$("#hrs").value=2;render();toast("All data cleared")},"Clear all data");
+
+/* ===== 10. RULE-BASED ASSISTANT (uses real task data only) ===== */
+/* Score = overdue bonus + urgency (next 72h) + priority weight. Not machine learning. */
+function ranked(){const now=Date.now();return S.tasks.filter(t=>!t.done).map(t=>{const h=(new Date(t.due)-now)/36e5;return{t,h,sc:(h<0?100:0)+Math.max(0,72-Math.max(h,0))/72*50+wt[t.priority]*10}}).sort((a,b)=>b.sc-a.sc)}
+const when=h=>h<0?`overdue by ${h>-24?Math.round(-h)+" h":Math.round(-h/24)+" day(s)"}`:h<24?`due in ${Math.round(h)} h`:`due in ${Math.round(h/24)} day(s)`;
+const li=r=>`<li><b>${esc(r.t.title)}</b> (${esc(r.t.subject)}, ${r.t.priority} priority, ${when(r.h)})</li>`;
+function reply(q){
+  const R=ranked(),s=q.toLowerCase();
+  if(!R.length)return "You have no pending tasks right now. Add a task on the My tasks page and I can help you prioritize it.";
+  if(/break|step|split/.test(s)){
+    const r=R.find(x=>s.includes(x.t.title.toLowerCase()))||R[0],now=Date.now(),end=Math.max(new Date(r.t.due).getTime(),now);
+    const steps=["Read the instructions and note the requirements","Gather materials and sources","Outline your approach","Complete the first half","Complete the second half","Review and fix mistakes","Submit or hand in"];
+    return `Here is a general breakdown for <b>${esc(r.t.title)}</b> (due ${fmt(r.t.due)}):<ol>${steps.map((x,i)=>`<li>${x}, by ${new Date(now+(end-now)*i/(steps.length-1)).toLocaleDateString([],{month:"short",day:"numeric"})}</li>`).join("")}</ol><span class="mu">These steps are generic. I don’t know the details of your assignment. Name a task in your message to break down a different one.</span>`}
+  if(/plan|schedule|week|daily/.test(s)){
+    const H=Math.max(1,Math.min(12,+$("#hrs").value||2)),days={};
+    R.forEach((r,i)=>{const d=Math.floor(i/H);(days[d]=days[d]||[]).push(r)});
+    const out=Object.keys(days).slice(0,7).map(d=>{const dt=new Date();dt.setDate(dt.getDate()+ +d);
+      return `<li><b>${dt.toLocaleDateString([],{weekday:"short",month:"short",day:"numeric"})}</b>: ${days[d].map(r=>esc(r.t.title)+(dkey(dt)>r.t.due.slice(0,10)?" ⚠ after its deadline":"")).join("; ")}</li>`}).join("");
+    return `Plan for ${H} study hour${H>1?"s":""} per day, assuming about 1 hour per task (I don’t know your real time estimates):<ul>${out}</ul>${Object.keys(days).length>7?"More tasks remain beyond this week.":""}`}
+  if(/tip|focus|advice|study|time|procrastinat/.test(s)&&!/first|priorit/.test(s))
+    return "Study tips:<ul><li>Work in 25-minute focus blocks with 5-minute breaks.</li><li>Start with the hardest or most urgent task while your energy is high.</li><li>Split big assignments into small steps with their own dates.</li><li>Silence notifications while you study.</li><li>Review your task list each evening and pick tomorrow’s top three.</li></ul>"+(R.some(r=>r.h<0)?"You have overdue tasks. Start with those.":"");
+  if(/first|priorit|next|order|what|should/.test(s))
+    return `Based on deadlines and priority, work on these in order:<ol>${R.slice(0,5).map(li).join("")}</ol>`;
+  return "I can help with: what to do first, a study plan, breaking a task into steps, and study tips. Try one of the buttons above.";
+}
+function chat(msg){
+  if(!msg.trim())return;const c=$("#chat");
+  c.insertAdjacentHTML("beforeend",`<div class="m u">${esc(msg)}</div><div class="m">${reply(msg)}</div>`);c.scrollTop=c.scrollHeight;
+}
+$("#cf").onsubmit=e=>{e.preventDefault();const v=$("#ci").value;$("#ci").value="";chat(v)};
+$("#hrs").onchange=e=>{S.prefs.hours=Math.max(1,Math.min(12,+e.target.value||2));e.target.value=S.prefs.hours;save()};
+
+/* ===== 11. START ===== */
+load();applyTheme();$("#hrs").value=S.prefs.hours;
+$("#chat").innerHTML='<div class="m">Hi! I’m LanceBot, a basic rule-based assistant. I use your saved tasks to suggest priorities and study plans. Pick a quick action above or type a question.</div>';
+render();go();
+</script>
+</body>
+</html>
